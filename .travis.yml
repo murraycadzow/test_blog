@@ -1,19 +1,22 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
 language: r
 cache: packages
-pandoc_version: 1.17.2
-
 branches:
-  only: source
+    only:
+        - source
+r_github_packages:
+    - rstudio/blogdown
+
+before_script:
+    - Rscript -e 'blogdown::install_hugo(version = "0.20.7")'
 
 script:
-  - Rscript -e 'servr:::knit_maybe(c(".", "_source", "_posts"), c(".", "_posts", "_posts"), "build.R", "jekyll")'
+    - Rscript -e 'blogdown::build_site()'
 
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_PAT
-  on:
-    branch: source
-  target_branch: master
+    provider: master
+    skip_cleanup: true
+    github_token: $GITHUB_PAT
+    on:
+        branch: source
+    local_dir: public
+    target_branch: gh-pages
